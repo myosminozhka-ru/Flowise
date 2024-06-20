@@ -77,3 +77,5 @@ class YandexEmbedding_Embeddings implements INode {
         return model;
     }
 }
+
+module.exports = { nodeClass: YandexEmbedding_Embeddings };
