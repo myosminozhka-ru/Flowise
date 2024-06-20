@@ -39,11 +39,6 @@
 //                     { label: 'Query Embedding', name: 'text-search-query' }
 //                 ],
 //                 default: 'text-search-doc'
-//             },
-//             {
-//                 label: 'Текст',
-//                 name: 'text',
-//                 type: 'string'
 //             }
 //         ];
 //     }
@@ -61,17 +56,12 @@
 //     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
 //         console.log("Инициализация Yandex Embeddings");
 //         const modelType = nodeData.inputs?.modelType as string;
-//         const text = nodeData.inputs?.text as string;
-
-//         if (!text) {
-//             throw new Error("Текст не предоставлен");
-//         }
 
 //         if (nodeData.inputs?.credentialId) {
 //             nodeData.credential = nodeData.inputs?.credentialId;
 //         }
 //         const credentialData = await getCredentialData(nodeData.credential ?? '', options);
-        
+
 //         const yandexApiKey = getCredentialParam('chatYandexGptApiKey', credentialData, nodeData);
 //         const folderId = getCredentialParam('chatYandexGptFolderID', credentialData, nodeData);
 
@@ -83,19 +73,13 @@
 //             modelURI: modelUri
 //         });
 
-//         let embedding;
-//         if (modelType === 'text-search-doc') {
-//             embedding = await model.embedDocuments([text]);
-//         } else {
-//             embedding = await model.embedQuery(text);
-//         }
-
-//         console.log("Embedding:", embedding);
-//         return embedding;
+//         console.log("Model URI:", modelUri);
+//         return model;
 //     }
 // }
 
 // module.exports = { nodeClass: YandexEmbedding_Embeddings };
+
 
 import { ICommonObject, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface';
 import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils';
@@ -112,6 +96,7 @@ class YandexEmbedding_Embeddings implements INode {
     baseClasses: string[];
     credential: INodeParams;
     inputs: INodeParams[];
+    outputs: INodeParams[];
 
     constructor() {
         this.label = 'Yandex Embeddings';
@@ -138,6 +123,19 @@ class YandexEmbedding_Embeddings implements INode {
                     { label: 'Query Embedding', name: 'text-search-query' }
                 ],
                 default: 'text-search-doc'
+            },
+            {
+                label: 'Текст',
+                name: 'text',
+                type: 'string',
+                default: ''
+            }
+        ];
+        this.outputs = [
+            {
+                label: 'Эмбеддинги',
+                name: 'embeddings',
+                type: 'any'
             }
         ];
     }
@@ -155,6 +153,11 @@ class YandexEmbedding_Embeddings implements INode {
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
         console.log("Инициализация Yandex Embeddings");
         const modelType = nodeData.inputs?.modelType as string;
+        const text = nodeData.inputs?.text as string;
+
+        if (!text) {
+            throw new Error("Текст не предоставлен");
+        }
 
         if (nodeData.inputs?.credentialId) {
             nodeData.credential = nodeData.inputs?.credentialId;
@@ -172,8 +175,15 @@ class YandexEmbedding_Embeddings implements INode {
             modelURI: modelUri
         });
 
-        console.log("Model URI:", modelUri);
-        return model;
+        let embedding;
+        if (modelType === 'text-search-doc') {
+            embedding = await model.embedDocuments([text]);
+        } else {
+            embedding = await model.embedQuery(text);
+        }
+
+        console.log("Embedding:", embedding);
+        return { embeddings: embedding };
     }
 }
 
