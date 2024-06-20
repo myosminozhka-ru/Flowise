@@ -91,21 +91,16 @@ class ChatYandexGPT_ChatModels implements INode {
             temperature: parseFloat(temperature),
             apiKey: apiKey,
             modelName: modelName,
-            maxOutputTokens: 2048,
+            maxOutputTokens: maxOutputTokens ? parseInt(maxOutputTokens, 10) : 2048,
             folderID: folderID,
-            // b1ge56thls78bimqn81e
             modelURI: modelURI,
-            // gpt://b1ge56thls78bimqn81e/yandexgpt/latest
             modelVersion: modelVersion,
             streaming: true,
             iamToken: iamToken
         }
 
-        if (maxOutputTokens) obj.maxOutputTokens = parseInt(maxOutputTokens, 10)
-
         const model = new ChatYandexGPT(obj)
         if (cache) model.cache = cache
-        // if (temperature) model.temperature = parseFloat(temperature)
         return model
     }
 }
