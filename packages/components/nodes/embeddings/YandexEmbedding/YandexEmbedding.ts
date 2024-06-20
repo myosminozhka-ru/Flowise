@@ -43,18 +43,8 @@ class YandexEmbedding_Embeddings implements INode {
         ];
     }
 
-    //@ts-ignore
-    loadMethods = {
-        async listModels(): Promise<INodeOptionsValue[]> {
-            return [
-                { label: 'Document Embedding', name: 'text-search-doc' },
-                { label: 'Query Embedding', name: 'text-search-query' }
-            ];
-        }
-    };
-
     async init(nodeData: INodeData, _: string, options: ICommonObject): Promise<any> {
-        console.log("Инициализация Yandex Embeddings");
+        console.log("Initializing Yandex Embeddings");
         const modelType = nodeData.inputs?.modelType as string;
 
         if (nodeData.inputs?.credentialId) {
@@ -78,4 +68,4 @@ class YandexEmbedding_Embeddings implements INode {
     }
 }
 
-module.exports = { nodeClass: YandexEmbedding_Embeddings };
+export { YandexEmbedding_Embeddings };
