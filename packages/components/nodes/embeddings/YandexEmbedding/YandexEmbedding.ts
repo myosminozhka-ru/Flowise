@@ -72,7 +72,6 @@ class YandexEmbedding_Embeddings implements INode {
             modelURI: modelUri
         });
 
-        // Проверка работоспособности модели
         const testText = "Hello, world!";
         try {
             const embedding = await model.embed([testText]);
