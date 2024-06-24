@@ -50,17 +50,36 @@ class YandexEmbedding_Embeddings implements INode {
             nodeData.credential = nodeData.inputs?.credentialId;
         }
         const credentialData = await getCredentialData(nodeData.credential ?? '', options);
+        if (!credentialData) {
+            throw new Error('Credential data not found');
+        }
 
         const yandexApiKey = getCredentialParam('chatYandexGptApiKey', credentialData, nodeData);
         const folderId = getCredentialParam('chatYandexGptFolderID', credentialData, nodeData);
+        if (!yandexApiKey || !folderId) {
+            throw new Error('Yandex API Key or Folder ID not found');
+        }
+
+        console.log('Yandex API Key:', yandexApiKey);
+        console.log('Folder ID:', folderId);
 
         const modelUri = `emb://${folderId}/${modelType}/latest`;
+        console.log('Model URI:', modelUri);
 
         const model = new YandexGPTEmbeddings({
             apiKey: yandexApiKey,
             folderID: folderId,
             modelURI: modelUri
         });
+
+        // Проверка работоспособности модели
+        const testText = "Hello, world!";
+        try {
+            const embedding = await model.embed([testText]);
+            console.log('Embedding for test text:', embedding);
+        } catch (error) {
+            console.error('Error generating embedding:', error);
+        }
 
         return model;
     }
